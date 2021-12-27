@@ -1,15 +1,5 @@
 <template>
-  <div>
-    <line-charts></line-charts>
+  <div class="about">
+    <h1>This is an about page</h1>
   </div>
 </template>
-
-<script>
-import LineCharts from '../components/LineCharts'
-
-export default {
-  components: {
-    LineCharts
-  }
-}
-</script>
