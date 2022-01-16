@@ -1,8 +1,10 @@
 <template>
   <v-app>
     <Header />
-    <v-main>
-      <router-view />
+    <v-main class="container">
+      <v-container fluid>
+        <router-view />
+      </v-container>
     </v-main>
   </v-app>
 </template>
@@ -14,3 +16,7 @@ export default {
   components: { Header }
 }
 </script>
+<style lang="sass" scoped>
+.container
+  background: #f3f3f3
+</style>

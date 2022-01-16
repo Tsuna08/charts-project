@@ -1,23 +1,15 @@
 <template>
-  <v-app-bar app color="lightblue">
+  <v-app-bar app color="#5c6bc0">
     <div class="d-flex align-center">
-      <!-- <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        /> -->
-
-      <!-- <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        /> -->
+      <v-img
+        alt="Charts Logo"
+        class="shrink mr-2"
+        contain
+        :src="require('../assets/logo.png')"
+        transition="scale-transition"
+        width="60"
+      />
+      <h2>Charts</h2>
     </div>
     <v-spacer></v-spacer>
     <v-btn text>
@@ -31,3 +23,12 @@
     </v-btn>
   </v-app-bar>
 </template>
+<style lang="sass" scoped>
+button
+  span
+    a
+      color: white
+      text-decoration: none
+h2
+  color: #ededed
+</style>
