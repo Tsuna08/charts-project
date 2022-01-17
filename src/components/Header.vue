@@ -19,7 +19,7 @@
       <router-link to="/charts">Charts</router-link>
     </v-btn>
     <v-btn text>
-      <router-link to="about">About</router-link>
+      <router-link to="/one-chart">One chart</router-link>
     </v-btn>
   </v-app-bar>
 </template>
