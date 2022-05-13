@@ -1,53 +1,41 @@
 <template>
   <v-card>
-    <vue-highcharts :options="chart.chartOptions" ref="chartLine"></vue-highcharts>
-
+    <vue-highcharts :options="chart.chartOptions" ref="chartLine"> </vue-highcharts>
     <v-expansion-panels>
-      <v-expansion-panel v-for="line in lineItems" :key="line._colorIndex">
-        <v-expansion-panel-header> Line settings {{ line.name }} </v-expansion-panel-header>
-        <v-expansion-panel-content>
-          <v-card-actions class="justify-space-between">
-            <div>
-              <label>Chart type</label>
-              <v-radio-group v-model="line.radioModel" row>
-                <v-radio
-                  @click="changeType(line)"
-                  v-for="radio in radioValue"
-                  :key="radio"
-                  :label="radio"
-                  :value="radio"
-                ></v-radio>
-              </v-radio-group>
-            </div>
-
-            <div>
-              <label>Chart color</label>
-              <v-color-picker
-                class="colorInput"
-                @input="changeBackground(line)"
-                v-model="line.backgroundColor"
-                dot-size="25"
-                hide-canvas
-                hide-inputs
-                hide-sliders
-                mode="hsla"
-                show-swatches
-                swatches-max-height="200"
-              ></v-color-picker>
-            </div>
-          </v-card-actions>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
+      <ExpansionPanel v-for="line in lineItems" :key="line._colorIndex">
+        <template slot="panel-header"> Line settings {{ line.name }}</template>
+        <template slot="panel-content">
+          <Radio
+            label="Chart type"
+            :items="radioValue"
+            :value="line.radioModel"
+            @input="changeType(line)"
+            v-model="line.radioModel"
+          />
+          <ColorPicker
+            label="Chart color"
+            :value="line.backgroundColor"
+            @input="changeBackground(line)"
+            v-model="line.backgroundColor"
+          />
+        </template>
+      </ExpansionPanel>
     </v-expansion-panels>
   </v-card>
 </template>
 
 <script>
 import VueHighcharts from 'vue2-highcharts'
+import ExpansionPanel from '../components/ExpansionPanel'
+import Radio from '../components/fields/Radio'
+import ColorPicker from '../components/fields/ColorPicker'
 
 export default {
   components: {
-    VueHighcharts
+    VueHighcharts,
+    ExpansionPanel,
+    Radio,
+    ColorPicker
   },
   data() {
     return {

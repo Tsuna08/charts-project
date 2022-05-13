@@ -12,17 +12,25 @@
       <h2>Charts</h2>
     </div>
     <v-spacer></v-spacer>
-    <v-btn text>
-      <router-link to="/">Home</router-link>
-    </v-btn>
-    <v-btn text>
-      <router-link to="/charts">Charts</router-link>
-    </v-btn>
-    <v-btn text>
-      <router-link to="/one-chart">One chart</router-link>
+    <v-btn text v-for="router in routers" :key="router.name">
+      <router-link :to="router.link">{{ router.name }}</router-link>
     </v-btn>
   </v-app-bar>
 </template>
+<script>
+export default {
+  data() {
+    return {
+      routers: [
+        { link: '/', name: 'Home' },
+        { link: '/charts', name: 'Charts' },
+        { link: '/one-chart', name: 'One chart' }
+      ]
+    }
+  }
+}
+</script>
+
 <style lang="sass" scoped>
 button
   span

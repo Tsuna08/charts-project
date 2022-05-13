@@ -5,56 +5,41 @@
     </v-btn>
     <v-row dense>
       <v-col v-for="chart in charts" :key="chart.typeChart" :cols="6">
-        <v-card>
-          <v-card-actions class="justify-end">
+        <Card className="justify-end">
+          <template slot="card-actions">
             <v-icon v-show="showIconCross" small @click="deleteChart(chart.typeChart)">mdi-close</v-icon>
-          </v-card-actions>
-          <vue-highcharts :options="chart.chartOptions" :ref="`${'chartLine_' + chart.typeChart}`"></vue-highcharts>
-
-          <v-expansion-panels>
-            <v-expansion-panel>
-              <v-expansion-panel-header> Chart settings </v-expansion-panel-header>
-              <v-expansion-panel-content>
-                <v-card-actions class="justify-space-between">
-                  <div>
-                    <label>Chart type</label>
-                    <v-radio-group v-model="chart.radioModel" row>
-                      <v-radio
-                        @click="changeType(chart.typeChart)"
-                        v-for="radio in radioValue"
-                        :key="radio"
-                        :label="radio"
-                        :value="radio"
-                      ></v-radio>
-                    </v-radio-group>
-                  </div>
-
-                  <div>
-                    <label>Chart color</label>
-                    <v-color-picker
-                      class="colorInput"
-                      @input="changeBackground(chart.typeChart)"
-                      v-model="chart.backgroundColor"
-                      dot-size="25"
-                      hide-canvas
-                      hide-inputs
-                      hide-sliders
-                      mode="hsla"
-                      show-swatches
-                      swatches-max-height="200"
-                    ></v-color-picker>
-                  </div>
-                </v-card-actions>
-              </v-expansion-panel-content>
-            </v-expansion-panel>
-          </v-expansion-panels>
-        </v-card>
+          </template>
+          <template slot="card-content">
+            <vue-highcharts :options="chart.chartOptions" :ref="`${'chartLine_' + chart.typeChart}`"> </vue-highcharts>
+            <v-expansion-panels>
+              <ExpansionPanel>
+                <template slot="panel-header"> Chart settings </template>
+                <template slot="panel-content">
+                  <Radio
+                    label="Chart type"
+                    :items="radioValue"
+                    :value="chart.radioModel"
+                    @input="changeType(chart.typeChart)"
+                    v-model="chart.radioModel"
+                  />
+                  <ColorPicker
+                    label="Chart color"
+                    :value="chart.backgroundColor"
+                    @input="changeBackground(chart.typeChart)"
+                    v-model="chart.backgroundColor"
+                  />
+                </template>
+              </ExpansionPanel>
+            </v-expansion-panels>
+          </template>
+        </Card>
       </v-col>
     </v-row>
 
     <v-row dense class="justify-center addRow">
-      <v-card>
-        <v-card-actions class="addCard justify-space-between">
+      <Card className="justify-space-between">
+        <template slot="card-actions">
+          <!-- <Radio :items="chartView" :value="chartModel" v-model="chartModel" /> -->
           <v-radio-group v-model="chartModel" row>
             <v-radio
               v-for="radio in chartView"
@@ -67,14 +52,18 @@
           <v-btn dark color="teal text--darken-4" :disabled="showButtonAdd" @click="createChart(chartModel)">
             Add chart<v-icon middle>mdi-plus</v-icon>
           </v-btn>
-        </v-card-actions>
-      </v-card>
+        </template>
+      </Card>
     </v-row>
   </div>
 </template>
 
 <script>
 import VueHighcharts from 'vue2-highcharts'
+import ExpansionPanel from '../components/ExpansionPanel'
+import Card from '../components/Card'
+import Radio from '../components/fields/Radio'
+import ColorPicker from '../components/fields/ColorPicker'
 
 const scale = {
   temperature: { max: -30, min: -10 },
@@ -85,7 +74,11 @@ const scale = {
 
 export default {
   components: {
-    VueHighcharts
+    VueHighcharts,
+    Card,
+    ExpansionPanel,
+    Radio,
+    ColorPicker
   },
   data() {
     return {
@@ -94,6 +87,7 @@ export default {
       ascending: true,
       radioValue: ['line', 'bar'],
       chartModel: '',
+      chartTypeModel: '',
       chartView: ['temperature', 'humidity', 'wind speed', 'pressure'],
       lastTypeChart: [],
       charts: []
@@ -112,11 +106,13 @@ export default {
       this.ascending = !this.ascending
     },
     changeType(typeChart) {
+      console.log('typeChart: ', typeChart)
       const chart = this.charts
         .filter((item) => {
           if (item.typeChart === typeChart) return item
         })
         .pop()
+      console.log('chart.radioModel: ', chart.radioModel)
       const lineCharts = this.$refs
       lineCharts['chartLine_' + typeChart][0].chart.series[0].update(
         {
@@ -126,12 +122,14 @@ export default {
       )
     },
     changeBackground(typeChart) {
+      console.log('typeChart: ', typeChart)
       const chart = this.charts
         .filter((item) => {
           if (item.typeChart === typeChart) return item
         })
         .pop()
       const lineCharts = this.$refs
+      console.log(' chart.backgroundColor: ', chart.backgroundColor)
       lineCharts['chartLine_' + typeChart][0].chart.series[0].update(
         {
           color: chart.backgroundColor
@@ -235,9 +233,6 @@ export default {
 }
 </script>
 <style lang="sass" scoped>
-.colorInput
-  height: 4.5em
-  margin-left: -12px
 .addRow
   padding-top: 10px
 .addCard
