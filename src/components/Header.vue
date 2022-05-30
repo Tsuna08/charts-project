@@ -12,8 +12,8 @@
       <h2>Charts</h2>
     </div>
     <v-spacer></v-spacer>
-    <v-btn text v-for="router in routers" :key="router.name">
-      <router-link :to="router.link">{{ router.name }}</router-link>
+    <v-btn text v-for="router in routers" :key="router.name" :to="router.link" color="white">
+      {{ router.name }}
     </v-btn>
   </v-app-bar>
 </template>

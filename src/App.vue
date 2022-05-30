@@ -3,7 +3,9 @@
     <Header />
     <v-main class="container">
       <v-container fluid>
-        <router-view />
+        <v-layout align-center justify-center fill-height>
+          <router-view />
+        </v-layout>
       </v-container>
     </v-main>
   </v-app>

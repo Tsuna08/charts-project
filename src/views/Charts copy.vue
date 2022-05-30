@@ -4,25 +4,30 @@
       {{ this.ascending ? 'Ascending' : 'Dscending' }} by date create
     </v-btn>
     <v-row dense>
-      <v-col v-for="chart in charts" :key="chart.typeChart" min-width="700">
+      <v-col v-for="chart in charts" :key="chart.typeChart" :cols="6">
         <Card className="justify-end">
           <template slot="card-actions">
             <v-icon v-show="showIconCross" small @click="deleteChart(chart.typeChart)">mdi-close</v-icon>
           </template>
           <template slot="card-content">
-            <ChartBlock
-              :chart="chart.series"
-              :typeChart="chart.radioModel"
-              :colorChart="chart.backgroundColor"
-              :labelChart="chart.typeChart"
-              min-width="700"
-            />
+            <vue-highcharts :options="chart.chartOptions" :ref="`${'chartLine_' + chart.typeChart}`"> </vue-highcharts>
             <v-expansion-panels>
               <ExpansionPanel>
                 <template slot="panel-header"> Chart settings </template>
                 <template slot="panel-content">
-                  <Radio label="Type" :items="radioValue" :value="chart.radioModel" v-model="chart.radioModel" />
-                  <ColorPicker label="Color" :value="chart.backgroundColor" v-model="chart.backgroundColor" />
+                  <Radio
+                    label="Type"
+                    :items="radioValue"
+                    :value="chart.radioModel"
+                    @input="changeType(chart.typeChart)"
+                    v-model="chart.radioModel"
+                  />
+                  <ColorPicker
+                    label="Color"
+                    :value="chart.backgroundColor"
+                    @input="changeBackground(chart.typeChart)"
+                    v-model="chart.backgroundColor"
+                  />
                 </template>
               </ExpansionPanel>
             </v-expansion-panels>
@@ -54,7 +59,7 @@
 </template>
 
 <script>
-import ChartBlock from '../components/ChartBlock'
+import VueHighcharts from 'vue2-highcharts'
 import ExpansionPanel from '../components/ExpansionPanel'
 import Card from '../components/Card'
 import Radio from '../components/fields/Radio'
@@ -69,7 +74,7 @@ const scale = {
 
 export default {
   components: {
-    ChartBlock,
+    VueHighcharts,
     Card,
     ExpansionPanel,
     Radio,
@@ -82,6 +87,7 @@ export default {
       ascending: true,
       radioValue: ['line', 'bar'],
       chartModel: '',
+      chartTypeModel: '',
       chartView: ['temperature', 'humidity', 'wind speed', 'pressure'],
       lastTypeChart: [],
       charts: []
@@ -98,6 +104,34 @@ export default {
         return this.ascending ? fistTime - lastTime : lastTime - fistTime
       })
       this.ascending = !this.ascending
+    },
+    changeType(typeChart) {
+      const chart = this.charts
+        .filter((item) => {
+          if (item.typeChart === typeChart) return item
+        })
+        .pop()
+      const lineCharts = this.$refs
+      lineCharts['chartLine_' + typeChart][0].chart.series[0].update(
+        {
+          type: chart.radioModel === 'bar' ? 'column' : 'spline'
+        },
+        true
+      )
+    },
+    changeBackground(typeChart) {
+      const chart = this.charts
+        .filter((item) => {
+          if (item.typeChart === typeChart) return item
+        })
+        .pop()
+      const lineCharts = this.$refs
+      lineCharts['chartLine_' + typeChart][0].chart.series[0].update(
+        {
+          color: chart.backgroundColor
+        },
+        true
+      )
     },
     deleteChart(typeChart) {
       this.charts = this.charts.filter((item) => {
@@ -118,9 +152,61 @@ export default {
         this.charts.push({
           createDate: new Date(),
           radioModel: 'line',
-          backgroundColor: '#2196f3',
-          typeChart: typeChart.charAt(0).toUpperCase() + typeChart.slice(1),
-          series: this.getRandomArbitrary(scale[typeChart].min, scale[typeChart].max)
+          backgroundColor: '#000000',
+          typeChart: typeChart,
+          chartOptions: {
+            chart: {
+              type: 'spline'
+            },
+            title: {
+              text: typeChart
+            },
+            yAxis: {
+              title: {
+                text: typeChart
+              }
+            },
+            xAxis: {
+              title: {
+                text: 'Days of December'
+              }
+            },
+            legend: {
+              align: 'left',
+              verticalAlign: 'top',
+              borderWidth: 0
+            },
+            plotOptions: {
+              series: {
+                label: {
+                  connectorAllowed: false
+                },
+                pointStart: 1
+              }
+            },
+            series: [
+              {
+                name: typeChart,
+                data: this.getRandomArbitrary(scale[typeChart].min, scale[typeChart].max)
+              }
+            ],
+            responsive: {
+              rules: [
+                {
+                  condition: {
+                    maxWidth: scale[typeChart].max
+                  },
+                  chartOptions: {
+                    legend: {
+                      layout: 'horizontal',
+                      align: 'center',
+                      verticalAlign: 'bottom'
+                    }
+                  }
+                }
+              ]
+            }
+          }
         })
         this.lastTypeChart.push(typeChart)
         this.chartModel = undefined

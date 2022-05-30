@@ -10,7 +10,7 @@
       hide-sliders
       mode="hsla"
       show-swatches
-      swatches-max-height="200"
+      swatches-max-height="80"
       @input="updateValue($event)"
     ></v-color-picker>
   </div>
